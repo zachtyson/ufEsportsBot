@@ -28,11 +28,17 @@ def run_bot():
         except Exception as e:
             print(e)
 
-    #
     @bot.hybrid_command(name="roster", description="Shows roster for the current team")
-    async def roster(ctx: commands.Context):
-        embed = discord.Embed(title="Current Roster:", color=0xff8585)
+    async def roster(ctx: commands.Context, team: str = None):
+        embed = discord.Embed(title="UF Esports Roster", color=0x00ff00)
+        if team is None:
+            # If no team is provided, reply with a list of available teams (modify accordingly)
+            embed.description = "We currently have teams for the following games:\n- Game 1\n- Game 2\n- Game 3"
+        else:
+            # Logic to fetch and embed the roster for the specified team can be added here
+            pass  # Remove this line when you add the logic for specific teams
         await ctx.reply(embed=embed)
 
     # Starts the bot (for real)
     bot.run(TOKEN)
+
