@@ -31,34 +31,35 @@ def run_bot():
     @bot.hybrid_command(name="roster", description="Shows roster for the current team")
     async def roster(ctx: commands.Context, team: str = None):
         embed = discord.Embed(title="UF Esports Roster", color=0x00ff00)
+
+        # Mapping of the game synonyms to the full name
+        games = {
+            "counter strike": ["csgo", "cs:go", "counter strike", "counter-strike",
+                               "counter strike: global offensive", "cs"],
+            "rainbow six": ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"],
+            "league of legends": ["league of legends", "lol", "league"],
+            "rocket league": ["rocket league", "rl"],
+            "overwatch": ["overwatch", "ow"]
+        }
+
         if team is None:
-            # If no team is provided, reply with a list of available teams (modify accordingly)
-            embed.description = "We currently have teams for the following games: " \
-                                "Counter Strike, Rainbow Six, League of Legends, Rocket League, and Overwatch"
+            # If no team is provided, reply with a list of available teams
+            embed.description = "We currently have teams for the following games: " + ", ".join(games.keys())
         else:
             team = team.lower()  # Convert the team name to lowercase
 
-            counter_strike = ["csgo", "cs:go", "counter strike", "counter-strike", "counter strike: global offensive"]
-            rainbow_six = ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"]
-            league_of_legends = ["league of legends", "lol", "league"]
-            rocket_league = ["rocket league", "rl"]
-            overwatch = ["overwatch", "ow"]
-
-            if team in counter_strike:
-                embed.description = "Here is the roster for the Counter Strike team"
-            elif team in rainbow_six:
-                embed.description = "Here is the roster for the Rainbow Six team"
-            elif team in league_of_legends:
-                embed.description = "Here is the roster for the League of Legends team"
-            elif team in rocket_league:
-                embed.description = "Here is the roster for the Rocket League team"
-            elif team in overwatch:
-                embed.description = "Here is the roster for the Overwatch team"
-            else:
+            found = False
+            for game, synonyms in games.items():
+                if team in synonyms:
+                    embed.description = f"Here is the roster for the {game.title()} team"
+                    found = True
+                    break
+            if not found:
                 embed.description = "Sorry, we don't have a team for that game yet"
 
             # Logic to fetch and embed the roster for the specified team can be added here
             pass  # Remove this line when you add the logic for specific teams
+
         await ctx.reply(embed=embed)
 
     # Starts the bot (for real)
