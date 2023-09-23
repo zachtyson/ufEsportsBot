@@ -67,27 +67,30 @@ def run_bot():
                     embed.description = f"Here is the roster for the {game.title()} team"
                     found = True
                     if found:
-                        print("Found team")
                         try:
-                            # Use the sheet object to access the values of the entire sheet
-                            # Assuming you're fetching data from the first sheet and its entire range
+                            # Fetch data from Google Sheets
                             result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Sheet1").execute()
                             values = result.get('values', [])
+                            rows = []
 
-                            # Check if data is present
                             if not values:
                                 print('No data found.')
                             else:
-                                # Print each row of the sheet to the console
-                                for row in values:
-                                    print(', '.join(row))
+                                game_row = None
+                                for idx, row in enumerate(values):
+                                    if game in [s.lower() for s in row]:
+                                        game_row = idx
+                                        rows.append(row)
+
+                                if game_row is not None:
+                                    for row in rows:
+                                        embed.add_field(name=row[1], value="\n".join(row[2:]), inline=True)
                         except HttpError as error:
                             print(f"An error occurred: {error}")
 
                     break
             if not found:
                 embed.description = "Sorry, we don't have a team for that game yet"
-            pass
 
         await ctx.reply(embed=embed)
 
