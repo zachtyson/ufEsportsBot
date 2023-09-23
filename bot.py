@@ -52,7 +52,7 @@ def run_bot():
             "Rainbow Six Siege": ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"],
             "League of Legends": ["league of legends", "lol", "league"],
             "Rocket League": ["rocket league", "rl"],
-            "Overwatch": ["overwatch", "ow"],
+            "Overwatch 2": ["overwatch", "ow", "overwatch 2", "overwatch2", "overwatch ii", "overwatch 2"],
             "Valorant": ["valorant", "val", "valor", "valor ant", "valor-ant", "v", "va", "valo", "valo-rant"],
         }
 
