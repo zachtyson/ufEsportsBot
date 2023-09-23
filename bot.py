@@ -47,12 +47,12 @@ def run_bot():
 
         # Mapping of the game synonyms to the full name
         games = {
-            "counter strike": ["csgo", "cs:go", "counter strike", "counter-strike",
+            "Counter-Strike": ["csgo", "cs:go", "counter strike", "counter-strike",
                                "counter strike: global offensive", "cs"],
-            "rainbow six": ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"],
-            "league of legends": ["league of legends", "lol", "league"],
-            "rocket league": ["rocket league", "rl"],
-            "overwatch": ["overwatch", "ow"]
+            "Rainbow Six Siege": ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"],
+            "League of Legends": ["league of legends", "lol", "league"],
+            "Rocket League": ["rocket league", "rl"],
+            "Overwatch": ["overwatch", "ow"]
         }
 
         if team is None:
@@ -78,7 +78,8 @@ def run_bot():
                             else:
                                 game_row = None
                                 for idx, row in enumerate(values):
-                                    if game in [s.lower() for s in row]:
+                                    if game.lower() in [s.lower() for s in row[:1]]:
+
                                         game_row = idx
                                         rows.append(row)
 
