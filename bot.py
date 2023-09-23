@@ -51,7 +51,7 @@ def run_bot():
                                "counter strike: global offensive", "cs", "cs go", "cs: go", "cs2", "cs 2"],
             "Rainbow Six Siege": ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"],
             "League of Legends": ["league of legends", "lol", "league"],
-            "Rocket League": ["rocket league", "rl"],
+            "Rocket League": ["rocket league", "rl", "rocket soccer", "rl: rocket league", "car soccer"],
             "Overwatch 2": ["overwatch", "ow", "overwatch 2", "overwatch2", "overwatch ii", "overwatch 2"],
             "Valorant": ["valorant", "val", "valor", "valor ant", "valor-ant", "v", "va", "valo", "valo-rant"],
         }
