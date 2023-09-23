@@ -48,11 +48,12 @@ def run_bot():
         # Mapping of the game synonyms to the full name
         games = {
             "Counter-Strike": ["csgo", "cs:go", "counter strike", "counter-strike",
-                               "counter strike: global offensive", "cs"],
+                               "counter strike: global offensive", "cs", "cs go", "cs: go", "cs2", "cs 2"],
             "Rainbow Six Siege": ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"],
             "League of Legends": ["league of legends", "lol", "league"],
             "Rocket League": ["rocket league", "rl"],
-            "Overwatch": ["overwatch", "ow"]
+            "Overwatch": ["overwatch", "ow"],
+            "Valorant": ["valorant", "val", "valor", "valor ant", "valor-ant", "v", "va", "valo", "valo-rant"],
         }
 
         if team is None:
