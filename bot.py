@@ -4,10 +4,20 @@ from datetime import date, datetime
 import datetime as dt
 import os
 from dotenv import load_dotenv
+from google.auth.transport.requests import Request
+from google.oauth2.service_account import Credentials
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+
+# Setup the Google Sheets API client
+SCOPE = ['https://www.googleapis.com/auth/spreadsheets']
+SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
+
 
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
-
 
 # Function to start the bot
 def run_bot():
@@ -18,6 +28,9 @@ def run_bot():
 
     # Creates instance of the bot that uses the prefix "^" for commands
     bot = MyBot(command_prefix="/", intents=discord.Intents.all())
+    credentials = Credentials.from_service_account_file("gatoresports.json", scopes=SCOPE)
+    service = build('sheets', 'v4', credentials=credentials)
+    sheet = service.spreadsheets()
 
     @bot.event
     async def on_ready():
@@ -46,19 +59,35 @@ def run_bot():
             # If no team is provided, reply with a list of available teams
             embed.description = "We currently have teams for the following games: " + ", ".join(games.keys())
         else:
-            team = team.lower()  # Convert the team name to lowercase
+            team = team.lower()
 
             found = False
             for game, synonyms in games.items():
                 if team in synonyms:
                     embed.description = f"Here is the roster for the {game.title()} team"
                     found = True
+                    if found:
+                        print("Found team")
+                        try:
+                            # Use the sheet object to access the values of the entire sheet
+                            # Assuming you're fetching data from the first sheet and its entire range
+                            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Sheet1").execute()
+                            values = result.get('values', [])
+
+                            # Check if data is present
+                            if not values:
+                                print('No data found.')
+                            else:
+                                # Print each row of the sheet to the console
+                                for row in values:
+                                    print(', '.join(row))
+                        except HttpError as error:
+                            print(f"An error occurred: {error}")
+
                     break
             if not found:
                 embed.description = "Sorry, we don't have a team for that game yet"
-
-            # Logic to fetch and embed the roster for the specified team can be added here
-            pass  # Remove this line when you add the logic for specific teams
+            pass
 
         await ctx.reply(embed=embed)
 
