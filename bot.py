@@ -42,7 +42,7 @@ def run_bot():
 
     # Creates instance of the bot that uses the prefix "^" for commands
     bot = MyBot(command_prefix="/", intents=discord.Intents.all())
-    credentials = Credentials.from_service_account_file("gatoresports.json", scopes=SCOPE)
+    credentials = Credentials.from_service_account_info(SERVICE_ACCOUNT_INFO, scopes=SCOPE)
     service = build('sheets', 'v4', credentials=credentials)
     sheet = service.spreadsheets()
 
