@@ -19,6 +19,20 @@ SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
+SERVICE_ACCOUNT_INFO = {
+    "type": os.getenv('CREDENTIALS_TYPE'),
+    "project_id": os.getenv('CREDENTIALS_PROJECT_ID'),
+    "private_key_id": os.getenv('CREDENTIALS_PRIVATE_KEY_ID'),
+    "private_key": os.getenv('CREDENTIALS_PRIVATE_KEY').replace('\\n', '\n'),
+    "client_email": os.getenv('CREDENTIALS_CLIENT_EMAIL'),
+    "client_id": os.getenv('CREDENTIALS_CLIENT_ID'),
+    "auth_uri": os.getenv('CREDENTIALS_AUTH_URI'),
+    "token_uri": os.getenv('CREDENTIALS_TOKEN_URI'),
+    "auth_provider_x509_cert_url": os.getenv('CREDENTIALS_AUTH_PROVIDER_X509_CERT_URL'),
+    "client_x509_cert_url": os.getenv('CREDENTIALS_CLIENT_X509_CERT_URL'),
+    "universe_domain": os.getenv('CREDENTIALS_UNIVERSE_DOMAIN')
+}
+
 # Function to start the bot
 def run_bot():
     # Set up timed loop functions
