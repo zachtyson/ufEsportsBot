@@ -118,7 +118,7 @@ def run_bot():
         embed.add_field(name="Twitter/X", value="https://twitter.com/UFEsportsClub", inline=False)
         embed.add_field(name="Instagram", value="https://instagram.com/ufclubesports", inline=False)
         embed.add_field(name="Twitch", value="https://twitch.tv/gator_esports", inline=False)
-        embed.add_field(name="Discord", value="https://discord.gg/Q2AeDhCPHB", inline=False)
+        embed.add_field(name="Discord", value="https://discord.gg/TQC9UYBxTc", inline=False)
 
 
         await ctx.reply(embed=embed)
