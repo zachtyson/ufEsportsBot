@@ -84,7 +84,7 @@ def run_bot():
                     if found:
                         try:
                             # Fetch data from Google Sheets
-                            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Sheet1").execute()
+                            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Rosters").execute()
                             values = result.get('values', [])
                             rows = []
 
