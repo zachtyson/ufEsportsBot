@@ -10,7 +10,6 @@ from googleapiclient.errors import HttpError
 SCOPE = ['https://www.googleapis.com/auth/spreadsheets']
 SPREADSHEET_ID = os.getenv('SPREADSHEET_ID')
 
-
 load_dotenv()
 TOKEN = os.getenv('TOKEN')
 
@@ -120,8 +119,15 @@ def run_bot():
         embed.add_field(name="Twitch", value="https://twitch.tv/gator_esports", inline=False)
         embed.add_field(name="Discord", value="https://discord.gg/TQC9UYBxTc", inline=False)
 
-
         await ctx.reply(embed=embed)
+
+    @bot.hybrid_command(name="commands", description="Shows help for the bot")
+    async def help(ctx: commands.Context):
+        embed = discord.Embed(title="UF Esports Bot Help", color=0x00ff00)
+        embed.add_field(name="Commands", value="`/roster <game>` - Shows roster for the current team\n"
+                                               "`/socials` - Shows socials for the current team\n"
+                                               "`/help` - Shows help for the bot", inline=False)
+        await ctx.reply(embed=embed)
+
     # Starts the bot (for real)
     bot.run(TOKEN)
-
