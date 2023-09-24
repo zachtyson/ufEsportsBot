@@ -50,6 +50,10 @@ def run_bot():
         except Exception as e:
             print(e)
 
+    @bot.hybrid_command(name="team", description="Shows roster for the current team")
+    async def t(ctx: commands.Context, team: str = None):
+        await roster(ctx, team)
+
     @bot.hybrid_command(name="roster", description="Shows roster for the current team")
     async def roster(ctx: commands.Context, team: str = None):
         embed = discord.Embed(title="UF Esports Roster", color=0x00ff00)
