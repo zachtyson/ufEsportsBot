@@ -116,7 +116,7 @@ def run_bot():
         await ctx.reply(embed=embed)
 
     @bot.hybrid_command(name="socials", description="Shows socials for the current team")
-    async def socials(ctx: commands.Context, team: str = None):
+    async def socials(ctx: commands.Context):
         embed = discord.Embed(title="UF Esports Socials", color=0x00ff00)
         embed.add_field(name="Twitter/X", value="https://twitter.com/UFEsportsClub", inline=False)
         embed.add_field(name="Instagram", value="https://instagram.com/ufclubesports", inline=False)
