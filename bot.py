@@ -112,8 +112,12 @@ def run_bot():
 
         await ctx.reply(embed=embed)
 
-        # ... rest of your code
+    @bot.hybrid_command(name="socials", description="Shows socials for the current team")
+    async def socials(ctx: commands.Context, team: str = None):
+        embed = discord.Embed(title="UF Esports Socials", color=0x00ff00)
 
+
+        await ctx.reply(embed=embed)
     # Starts the bot (for real)
     bot.run(TOKEN)
 
