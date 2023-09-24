@@ -1,15 +1,10 @@
-import discord
-from discord.ext import commands, tasks
-from datetime import date, datetime
-import datetime as dt
 import os
+import discord
+from discord.ext import commands
 from dotenv import load_dotenv
-from google.auth.transport.requests import Request
 from google.oauth2.service_account import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
-
 
 # Setup the Google Sheets API client
 SCOPE = ['https://www.googleapis.com/auth/spreadsheets']
@@ -32,6 +27,7 @@ SERVICE_ACCOUNT_INFO = {
     "client_x509_cert_url": os.getenv('CREDENTIALS_CLIENT_X509_CERT_URL'),
     "universe_domain": os.getenv('CREDENTIALS_UNIVERSE_DOMAIN')
 }
+
 
 # Function to start the bot
 def run_bot():
@@ -76,39 +72,47 @@ def run_bot():
         else:
             team = team.lower()
 
-            found = False
-            for game, synonyms in games.items():
+            game_title = None
+            for title, synonyms in games.items():
                 if team in synonyms:
-                    embed.description = f"Here is the roster for the {game.title()} team"
-                    found = True
-                    if found:
-                        try:
-                            # Fetch data from Google Sheets
-                            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Rosters").execute()
-                            values = result.get('values', [])
-                            rows = []
-
-                            if not values:
-                                print('No data found.')
-                            else:
-                                game_row = None
-                                for idx, row in enumerate(values):
-                                    if game.lower() in [s.lower() for s in row[:1]]:
-
-                                        game_row = idx
-                                        rows.append(row)
-
-                                if game_row is not None:
-                                    for row in rows:
-                                        embed.add_field(name=row[1], value="\n".join(row[2:]), inline=True)
-                        except HttpError as error:
-                            print(f"An error occurred: {error}")
-
+                    game_title = title
                     break
-            if not found:
-                embed.description = "Sorry, we don't have a team for that game yet"
+
+            if game_title:
+                try:
+                    # Fetch data from Google Sheets
+                    result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Rosters").execute()
+                    values = result.get('values', [])
+                    rows = []
+
+                    if not values:
+                        print('No data found.')
+                    else:
+                        game_row = None
+                        synonyms = [game_title.lower()] + games[
+                            game_title]  # including the title in the synonyms list for matching
+
+                        for idx, row in enumerate(values):
+                            if row and row[0].lower() in synonyms:
+                                game_row = idx
+                                rows.append(row)
+
+                        if game_row is not None:
+                            embed.description = f"Here is the roster for the {game_title} team"
+                            for row in rows:
+                                embed.add_field(name=row[1], value="\n".join(row[2:]), inline=True)
+                        else:
+                            embed.description = "Sorry, we don't have data for that game yet, " \
+                                                "please wait for an organizer to update the data."
+                except HttpError as error:
+                    print(f"An error occurred: {error}")
+
+            else:
+                embed.description = "Sorry, we don't have a team for that game."
 
         await ctx.reply(embed=embed)
+
+        # ... rest of your code
 
     # Starts the bot (for real)
     bot.run(TOKEN)
