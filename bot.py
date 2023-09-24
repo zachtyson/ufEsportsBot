@@ -121,7 +121,9 @@ def run_bot():
 
         await ctx.reply(embed=embed)
 
-    @bot.hybrid_command(name="commands", description="Shows help for the bot")
+    bot.remove_command("help")
+
+    @bot.hybrid_command(name="help", description="Shows help for the bot")
     async def help(ctx: commands.Context):
         embed = discord.Embed(title="UF Esports Bot Help", color=0x00ff00)
         embed.add_field(name="Commands", value="`/roster <game>` - Shows roster for the current team\n"
