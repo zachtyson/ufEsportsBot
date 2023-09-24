@@ -117,11 +117,25 @@ def run_bot():
 
     @bot.hybrid_command(name="socials", description="Shows socials for the current team")
     async def socials(ctx: commands.Context):
-        embed = discord.Embed(title="UF Esports Socials", color=0x00ff00)
-        embed.add_field(name="Twitter/X", value="https://twitter.com/UFEsportsClub", inline=False)
-        embed.add_field(name="Instagram", value="https://instagram.com/ufclubesports", inline=False)
-        embed.add_field(name="Twitch", value="https://twitch.tv/gator_esports", inline=False)
-        embed.add_field(name="Discord", value="https://discord.gg/TQC9UYBxTc", inline=False)
+        try:
+            # Fetch data from Google Sheets
+            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Socials").execute()
+            values = result.get('values', [])
+            embed = discord.Embed(title="UF Esports Socials", color=0x00ff00)
+
+            if not values:
+                return await ctx.reply("Failed to fetch social links. Please try again later.")
+            else:
+                for row in values:
+                    if not row:
+                        break
+                    name = row[0]
+                    link = row[1]
+                    embed.add_field(name=name, value=link, inline=False)
+
+        except HttpError as error:
+            print(f"An error occurred: {error}")
+            return await ctx.reply("Failed to fetch social links. Please try again later.")
 
         await ctx.reply(embed=embed)
 
