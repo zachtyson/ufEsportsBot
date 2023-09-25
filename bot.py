@@ -149,5 +149,29 @@ def run_bot():
                                                "`/help` - Shows help for the bot", inline=False)
         await ctx.reply(embed=embed)
 
+
+    @bot.hybrid_command(name="gbm", description="Shows the upcoming GBM")
+    async def gbm(ctx: commands.Context):
+        try:
+            # Fetch data from Google Sheets
+            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="GBM").execute()
+            values = result.get('values', [])
+            embed = discord.Embed(title="UF Esports GBM", color=0x00ff00)
+
+            if not values:
+                return await ctx.reply("Failed to fetch GBM info. Please try again later.")
+            else:
+                for row in values[1:]:  # Skip the header row
+                    date, location, description = row
+                    embed.add_field(name="Date", value=date, inline=False)
+                    embed.add_field(name="Location", value=location, inline=False)
+                    embed.add_field(name="Description", value=description, inline=False)
+
+        except HttpError as error:
+            print(f"An error occurred: {error}")
+            return await ctx.reply("Failed to fetch social links. Please try again later.")
+
+        await ctx.reply(embed=embed)
+
     # Starts the bot (for real)
     bot.run(TOKEN)
