@@ -166,7 +166,7 @@ def run_bot():
                 latest_gbm = None
                 data_rows = values[1:]  # Skip the header row
                 data_rows.sort(key=lambda row: datetime.strptime(row[0], '%B %d, %Y, %I:%M %p'))
-                for r in data_rows:  # Skip the header row
+                for r in data_rows:
                     date_str, location, description = r
                     date = datetime.strptime(date_str, '%B %d, %Y, %I:%M %p')
                     if date < datetime.now():
