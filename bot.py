@@ -147,6 +147,7 @@ def run_bot():
         embed = discord.Embed(title="UF Esports Bot Help", color=0x00ff00)
         embed.add_field(name="Commands", value="`/roster <game>` - Shows roster for the current team\n"
                                                "`/socials` - Shows socials for the current team\n"
+                                               "`/gbm` - Shows the upcoming GBM\n"
                                                "`/help` - Shows help for the bot", inline=False)
         await ctx.reply(embed=embed)
 
