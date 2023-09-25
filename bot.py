@@ -1,3 +1,4 @@
+from datetime import datetime, timedelta
 import os
 import discord
 from discord.ext import commands
@@ -149,7 +150,6 @@ def run_bot():
                                                "`/help` - Shows help for the bot", inline=False)
         await ctx.reply(embed=embed)
 
-
     @bot.hybrid_command(name="gbm", description="Shows the upcoming GBM")
     async def gbm(ctx: commands.Context):
         try:
@@ -161,11 +161,29 @@ def run_bot():
             if not values:
                 return await ctx.reply("Failed to fetch GBM info. Please try again later.")
             else:
-                for row in values[1:]:  # Skip the header row
-                    date, location, description = row
-                    embed.add_field(name="Date", value=date, inline=False)
+                upcoming_gbm = None
+                latest_gbm = None
+                data_rows = values[1:]  # Skip the header row
+                data_rows.sort(key=lambda row: datetime.strptime(row[0], '%B %d, %Y, %I:%M %p'))
+                for r in data_rows:  # Skip the header row
+                    date_str, location, description = r
+                    date = datetime.strptime(date_str, '%B %d, %Y, %I:%M %p')
+                    if date < datetime.now():
+                        latest_gbm = r
+                    if date > datetime.now() and upcoming_gbm is None:
+                        upcoming_gbm = r
+                        break
+
+                if upcoming_gbm:
+                    date_str, location, description = upcoming_gbm
+                    embed.add_field(name="Date", value=date_str, inline=False)
                     embed.add_field(name="Location", value=location, inline=False)
                     embed.add_field(name="Description", value=description, inline=False)
+                elif latest_gbm:
+                    date_str, location, description = latest_gbm
+                    embed.description = "There are no upcoming GBMs scheduled, the latest one was on " + date_str + "."
+                else:
+                    embed.description = "There are no upcoming GBMs scheduled."
 
                 return await ctx.reply(embed=embed)
 
