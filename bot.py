@@ -167,11 +167,11 @@ def run_bot():
                     embed.add_field(name="Location", value=location, inline=False)
                     embed.add_field(name="Description", value=description, inline=False)
 
+                return await ctx.reply(embed=embed)
+
         except HttpError as error:
             print(f"An error occurred: {error}")
             return await ctx.reply("Failed to fetch social links. Please try again later.")
-
-        await ctx.reply(embed=embed)
 
     # Starts the bot (for real)
     bot.run(TOKEN)
