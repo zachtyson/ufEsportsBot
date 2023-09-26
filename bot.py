@@ -1,3 +1,4 @@
+import sys
 from datetime import datetime, timedelta
 import os
 import discord
@@ -33,9 +34,24 @@ SERVICE_ACCOUNT_INFO = {
 def run_bot():
     class MyBot(commands.Bot):
         start_time = datetime.utcnow()
+        games_dict = {}
 
         async def setup_hook(self):
             print("Bot starting")
+            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Games").execute()
+            values = result.get('values', [])
+            if not values:
+                sys.exit("No data found.")
+            self.games_dict = self.convert_to_dict(values)
+
+        @staticmethod
+        def convert_to_dict(data):
+            result_dict = {}
+            for row in data:
+                key = row[0]
+                values = row[1:]
+                result_dict[key] = values
+            return result_dict
 
     bot = MyBot(command_prefix="/", intents=discord.Intents.all())
     credentials = Credentials.from_service_account_info(SERVICE_ACCOUNT_INFO, scopes=SCOPE)
@@ -60,15 +76,7 @@ def run_bot():
         embed = discord.Embed(title="UF Esports Roster", color=0x00ff00)
 
         # Mapping of the game synonyms to the full name
-        games = {
-            "Counter-Strike": ["csgo", "cs:go", "counter strike", "counter-strike",
-                               "counter strike: global offensive", "cs", "cs go", "cs: go", "cs2", "cs 2"],
-            "Rainbow Six Siege": ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"],
-            "League of Legends": ["league of legends", "lol", "league"],
-            "Rocket League": ["rocket league", "rl", "rocket soccer", "rl: rocket league", "car soccer"],
-            "Overwatch 2": ["overwatch", "ow", "overwatch 2", "overwatch2", "overwatch ii", "overwatch 2"],
-            "Valorant": ["valorant", "val", "valor", "valor ant", "valor-ant", "v", "va", "valo", "valo-rant"],
-        }
+        games = bot.games_dict
 
         if team is None:
             # If no team is provided, reply with a list of available teams
