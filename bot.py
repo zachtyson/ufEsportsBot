@@ -33,6 +33,8 @@ SERVICE_ACCOUNT_INFO = {
 def run_bot():
     # Set up timed loop functions
     class MyBot(commands.Bot):
+        start_time = datetime.utcnow()
+
         async def setup_hook(self):
             print("Bot starting")
 
@@ -148,7 +150,8 @@ def run_bot():
         embed.add_field(name="Commands", value="`/roster <game>` - Shows roster for the current team\n"
                                                "`/socials` - Shows socials for the current team\n"
                                                "`/gbm` - Shows the upcoming GBM\n"
-                                               "`/help` - Shows help for the bot", inline=False)
+                                               "`/help` - Shows help for the bot\n"
+                                               "`/uptime` - Shows the bot uptime", inline=False)
         await ctx.reply(embed=embed)
 
     @bot.hybrid_command(name="gbm", description="Shows the upcoming GBM")
@@ -191,6 +194,20 @@ def run_bot():
         except HttpError as error:
             print(f"An error occurred: {error}")
             return await ctx.reply("Failed to fetch social links. Please try again later.")
+
+    @bot.hybrid_command(name="uptime", description="Shows the bot's uptime")
+    async def uptime(ctx: commands.Context):
+        embed = discord.Embed(title="UF Esports Bot Uptime", color=0x00ff00)
+        now = datetime.utcnow()
+        delta = now - bot.start_time
+        months = delta.days // 30
+        days = delta.days % 30
+        hours = delta.seconds // 3600
+        minutes = (delta.seconds % 3600) // 60
+        seconds = delta.seconds % 60
+        embed.description = f"{months} months, {days} days, {hours} hours, {minutes} minutes, {seconds} seconds"
+
+        await ctx.reply(embed=embed)
 
     # Starts the bot (for real)
     bot.run(TOKEN)
