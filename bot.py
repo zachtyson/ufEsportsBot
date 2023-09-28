@@ -218,5 +218,37 @@ def run_bot():
 
         await ctx.reply(embed=embed)
 
+    @bot.command(name="overlay")
+    async def overlay(ctx, background_url: str, img1_url: str, img2_url: str):
+        try:
+            image = overlay_images(background_url, img1_url, img2_url)
+            await ctx.send(file=discord.File(fp=image, filename='overlay.png'))
+        except Exception as e:
+            await ctx.send(f"An error occurred: {str(e)}")
+
     # Starts the bot (for real)
     bot.run(TOKEN)
+
+
+def overlay_images(background_url, img1_url, img2_url):
+    # Convert the URL into a bytes-like object using requests
+    bg = Image.open(io.BytesIO(requests.get(background_url).content))
+    img1 = Image.open(io.BytesIO(requests.get(img1_url).content))
+    img2 = Image.open(io.BytesIO(requests.get(img2_url).content))
+
+    # Calculate new dimensions for img1 and img2
+    new_width = int(bg.width / 2)
+    new_height = bg.height
+
+    # Resize img1 and img2
+    img1 = img1.resize((new_width, new_height), Image.LANCZOS)
+    img2 = img2.resize((new_width, new_height), Image.LANCZOS)
+
+    bg.paste(img1, (0, 0))
+    bg.paste(img2, (0, 0))
+
+    # Convert back to bytes for Discord
+    arr = io.BytesIO()
+    bg.save(arr, format='PNG')
+    arr.seek(0)
+    return arr
