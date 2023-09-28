@@ -2,11 +2,14 @@ import sys
 from datetime import datetime, timedelta
 import os
 import discord
+import requests
 from discord.ext import commands
 from dotenv import load_dotenv
 from google.oauth2.service_account import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
+from PIL import Image
+import io
 
 # Setup the Google Sheets API client
 SCOPE = ['https://www.googleapis.com/auth/spreadsheets']
