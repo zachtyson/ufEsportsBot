@@ -37,15 +37,24 @@ SERVICE_ACCOUNT_INFO = {
 def run_bot():
     class MyBot(commands.Bot):
         start_time = datetime.utcnow()
-        games_dict = {}
+        games_dict = {
+            "Counter-Strike": ["csgo", "cs:go", "counter strike", "counter-strike", "counter strike: global offensive",
+                               "cs", "cs go", "cs: go", "cs2", "cs 2"],
+            "Rainbow Six Siege": ["rainbow six", "rainbow six siege", "r6", "r6s", "rainbow 6", "rainbow 6 siege"],
+            "League of Legends": ["league of legends", "lol", "league"],
+            "Rocket League": ["rocket league", "rl", "rocket soccer", "rl: rocket league", "car soccer"],
+            "Overwatch 2": ["overwatch", "ow", "overwatch 2", "overwatch2", "overwatch ii", "overwatch 2"],
+            "Valorant": ["valorant", "val", "valor", "valor ant", "valor-ant", "v", "va", "valo", "valo-rant"],
+            "Splatoon": ["splatoon", "splat", "splat3", "spoon", "sploon", "spl"]
+        }
 
         async def setup_hook(self):
             print("Bot starting")
-            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Games").execute()
+            result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Players").execute()
             values = result.get('values', [])
             if not values:
                 sys.exit("No data found.")
-            self.games_dict = self.convert_to_dict(values)
+            # self.games_dict = self.convert_to_dict(values)
 
         @staticmethod
         def convert_to_dict(data):
@@ -96,7 +105,7 @@ def run_bot():
             if game_title:
                 try:
                     # Fetch data from Google Sheets
-                    result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Rosters").execute()
+                    result = sheet.values().get(spreadsheetId=SPREADSHEET_ID, range="Players").execute()
                     values = result.get('values', [])
                     rows = []
 
@@ -108,14 +117,32 @@ def run_bot():
                             game_title]  # including the title in the synonyms list for matching
 
                         for idx, row in enumerate(values):
-                            if row and row[0].lower() in synonyms:
+                            if row and row[3].lower() in synonyms:
                                 game_row = idx
                                 rows.append(row)
 
                         if game_row is not None:
                             embed.description = f"Here is the roster for the {game_title} team"
+                            #team names empty array
+                            team_names = []
+                            #player names empty 2d array
+                            player_names = []
+
                             for row in rows:
-                                embed.add_field(name=row[1], value="\n".join(row[2:]), inline=True)
+                                # Old code:
+                                # embed.add_field(name=row[1], value="\n".join(row[2:]), inline=True)
+                                # Now the first column is gamertag, and 5th column is the team name
+                                # Show each player's gamertag and group based on the team name
+                                gamertag = row[0]
+                                team_name = row[4]
+                                if team_name not in team_names:
+                                    team_names.append(team_name)
+                                    player_names.append([gamertag])
+                                else:
+                                    idx = team_names.index(team_name)
+                                    player_names[idx].append(gamertag)
+                            for i in range(len(team_names)):
+                                embed.add_field(name=team_names[i], value="\n".join(player_names[i]), inline=True)
                         else:
                             embed.description = "Sorry, we don't have data for that game yet, " \
                                                 "please wait for an organizer to update the data."
@@ -127,6 +154,7 @@ def run_bot():
 
         await ctx.reply(embed=embed)
 
+    """
     @bot.hybrid_command(name="socials", description="Shows socials for the current team")
     async def socials(ctx: commands.Context):
         try:
@@ -203,6 +231,7 @@ def run_bot():
         except HttpError as error:
             print(f"An error occurred: {error}")
             return await ctx.reply("Failed to fetch social links. Please try again later.")
+    """
 
     @bot.hybrid_command(name="uptime", description="Shows the bot's uptime")
     async def uptime(ctx: commands.Context):
@@ -218,6 +247,7 @@ def run_bot():
 
         await ctx.reply(embed=embed)
 
+    """
     @bot.command(name="overlay")
     async def overlay(ctx, background_url: str, img1_url: str, img2_url: str):
         try:
@@ -225,7 +255,7 @@ def run_bot():
             await ctx.send(file=discord.File(fp=image, filename='overlay.png'))
         except Exception as e:
             await ctx.send(f"An error occurred: {str(e)}")
-
+    """
     # Starts the bot (for real)
     bot.run(TOKEN)
 
